@@ -49,45 +49,57 @@ for i in range(2):
 
 
 def calculate_score(game_cards):
-    score = 0 
+    score = 0
     for cards_score in game_cards:
         score += cards_score
-    if score > 21 and 11 in game_cards:
+    if score > 21 and 11 in game_cards: ## 增加驗證判斷11(Ace)實際的分數
         game_cards.remove(11)
         game_cards.append(1)
+        score = 0 
+        for cards_score in game_cards:
+            score += cards_score
+    else: 
         score = 0 
         for cards_score in game_cards:
             score += cards_score
     return score
 
 
-##so far so good 
-
 def add_newcards(current_cards):
-    if calculate_score(current_cards) < 17:
+    while calculate_score(current_cards) < 17:
         current_cards.append(deal_card())
     return current_cards
 
-add_newcards(user_cards)
+#電腦增加卡片跟彼此的現階段計分
 add_newcards(computer_cards)# 電腦根據卡片狀況決定要不要加卡片
-
-user_score = calculate_score(user_cards)
 computer_score = calculate_score(computer_cards)
+user_score = calculate_score(user_cards)
+
+#用戶根據電腦分數判斷要不要加 & 但是17分以後就不加卡片了
+if computer_score < 21 and computer_score > user_score:
+    while computer_score > user_score:
+        user_cards.append(deal_card())
+        user_score = calculate_score(user_cards)
+
+#根據最後結果判定
+if computer_score > 21: 
+    print("User win the game because computer over 21")
+elif user_score >21:
+    print("Computer win the game because User over 21")
+elif computer_score == 21 and len(computer_cards) == 2:
+    print("computer win the game directly due to blackjack")
+elif user_score == 21 and len(user_score) == 2:
+    print("User win the game directly due to blackjack")
+elif computer_score >= user_score or computer_score ==21:
+    print("computer win the game")
+else:
+    print("user win the game")
 
 print(user_cards) # 檢視目前卡片的狀況
 print(computer_cards)# 檢視目前卡片的狀況
 
 print(f"user score is {user_score}")# 檢視目前卡片的分數
 print(f"computer score is {computer_score}")# 檢視目前卡片的分數
-
-
-if computer_score > 21: 
-    print("computer lose the game")
-elif computer_score > user_score or computer_score ==21:
-    print("computer win the game")
-else:
-    print("user win the game")
-
 #Hint 6: Create a function called calculate_score() that takes a List of cards as input 
 #and returns the score. 
 #Look up the sum() function to help you do this.
